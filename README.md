@@ -43,7 +43,7 @@ CrossChainNFT is also an ERC721 standardized smart contract but also its interfa
 FUNCTIONS
 
 * requestTransferCrossChain(contAddr, tokenId, from, to, targetChainId )
-* wReturnCrossChainRequest(wTokenId, to)
+* requestReleaseLockedToken(wTokenId, to)
 
 EVENTS
 
