@@ -42,7 +42,7 @@ CrossChainNFT is also an ERC721 standardized smart contract but also its interfa
 
 FUNCTIONS
 
-* transferCrossChainRequest(contAddr, tokenId, from, to, targetChainId )
+* requestTransferCrossChain(contAddr, tokenId, from, to, targetChainId )
 * wReturnCrossChainRequest(wTokenId, to)
 
 EVENTS
@@ -50,7 +50,7 @@ EVENTS
 * RelayerCallSafeMintWrappedToken(targetChainId, to, chainId, contAddr, tokenId, uri)
 * RelayerCallRedeem(chainId, contAddr, tokenId, to)
 
-To request a crosschain transfer you should call \`transferCrossChainRequest\` in CrossChainNFT on Ethereum. CrossChainNFT will transfer your NFT from your address to its address and hold it. this transaction will emit an event on Ethereum and advice offchain relayer to mint a wrapped token coresponding to your NFT on polygon and transfer it to the address you requested. so the relayer will call a function of the CrossChainNFT on polygon and your wNFT will be born there.
+To request a crosschain transfer you should call \`requestTransferCrossChain\` in CrossChainNFT on Ethereum. CrossChainNFT will transfer your NFT from your address to its address and hold it. this transaction will emit an event on Ethereum and advice offchain relayer to mint a wrapped token coresponding to your NFT on polygon and transfer it to the address you requested. so the relayer will call a function of the CrossChainNFT on polygon and your wNFT will be born there.
 
 
 
