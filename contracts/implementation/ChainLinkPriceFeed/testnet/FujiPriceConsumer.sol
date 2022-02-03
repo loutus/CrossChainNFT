@@ -8,7 +8,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorInterface.sol";
 abstract contract FujiPriceConsumer {
 
 
-    function __priceConsumer_init() internal {
+    constructor() {
         _setAggregator(4, 0x86d67c3D38D2bCeE722E601025C25a575021c6EA); // rinkeby ETHUSD(4)
         _setAggregator(43113, 0x5498BB86BC934c8D34FDA08E81D444153d0D06aD); // fuji AVAXUSD(43113)
         _setPriceUSD(80001, 2.28 * 10 ** 8); // mumbai MATICUSD(80001)
@@ -25,7 +25,7 @@ abstract contract FujiPriceConsumer {
         require(_priceUSD(targetChainId) != 0, "chain Id not supported");
         uint256 currentChainId;
         assembly {currentChainId := chainid()}
-        return uint256(_priceUSD(targetChainId) / _priceUSD(currentChainId) * 10 ** 18);
+        return uint256(_priceUSD(targetChainId) * 10 ** 18 / _priceUSD(currentChainId));
     }
 
     function _priceUSD(uint256 chainId) internal view returns(int256) {

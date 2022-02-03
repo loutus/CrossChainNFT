@@ -5,11 +5,16 @@ pragma solidity ^0.8.7;
 // gas prices of defferent chain ids 
 abstract contract GasPriceConsumer {
 
-    function __gasPriceConsumer_init() internal {
+    constructor() {
         _setGasPriceGwei(1, 2500000007); //tested on rinkeby, kovan 
         _setGasPriceGwei(56, 30000000000); //not tested...
         _setGasPriceGwei(137, 30000000000); //tested on polygon mainnet
         _setGasPriceGwei(43114, 30000000000); //not tested...
+
+        _setGasPriceGwei(4, 30000000000); //not tested...
+        _setGasPriceGwei(80001, 30000000000); //not tested...
+        _setGasPriceGwei(43113, 30000000000); //not tested...
+
     }
 
     mapping(uint256 => uint256) chainIdToGasPriceGwei;

@@ -1,21 +1,44 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./CrossChainImplementationInterface.sol";
+import "../CrossChainNFT/MintRedeemInterface.sol";
 import "./Payment.sol";
 
-contract CrossChainImplementation is Initializable, CrossChainImplementationInterface, Payment{
+contract CrossChainImplementation is CrossChainImplementationInterface, Payment{
 
     function version() public pure returns(string memory) {
-        return "1.0.0";
+        return "0.2.0";
     }
 
-    function initialize() initializer public {
-        __Ownable_init();
-        __PaymentData_init();
-        __priceConsumer_init();
-        __gasPriceConsumer_init();
+    MintRedeemInterface crossChain;
+
+    
+    /**
+     * @dev Emitted to request the relayer to mint a wToken owned by `to` on `targetChainId`.
+     */
+    event RelayerCallSafeMintWrappedToken(
+        uint256 targetChainId,
+        address to,
+        uint256 chainId,
+        address contAddr,
+        uint256 tokenId,
+        string uri
+    );
+
+    /**
+     * @dev Emitted to request the relayer to redeem the locked token and transfer it to `to`.
+     */
+    event RelayerCallRedeem(
+        uint256 chainId,
+        address contAddr,
+        address to,
+        uint256 tokenId
+    );
+
+
+    constructor(){
+        crossChain = MintRedeemInterface(0x16539214c06b69b3bc4c2613cFE8a6BCf6d2A4aC); //CrossChainNFT on Fuji
     }
 
     function mintFee(uint256 targetChainId) public view returns(uint256){
@@ -34,10 +57,18 @@ contract CrossChainImplementation is Initializable, CrossChainImplementationInte
         address contAddr,
         uint256 tokenId,
         string memory uri,
-        uint256 dappId,
-        bytes memory data
+        address dappAddr
     ) public payable {
-        _payMintFee(msg.value, targetChainId, dappId);
+        _payMintFee(msg.value, targetChainId, dappAddr);
+
+        emit RelayerCallSafeMintWrappedToken(
+            targetChainId,
+            to,
+            chainId,
+            contAddr,
+            tokenId,
+            uri
+        );
     }
 
     function requestReleaseLockedToken(
@@ -45,9 +76,24 @@ contract CrossChainImplementation is Initializable, CrossChainImplementationInte
         address contAddr,
         address to,
         uint256 tokenId,
-        uint256 dappId,
-        bytes memory data
+        address dappAddr
     ) public payable{
-        _payRedeemFee(msg.value, chainId, dappId);
+        _payRedeemFee(msg.value, chainId, dappAddr);
+        emit RelayerCallRedeem(chainId, contAddr, to, tokenId);
+    }
+
+    function redeem(address contAddr, address to, uint256 tokenId) public onlyOwner {
+        crossChain.redeem(contAddr, to, tokenId);
+    }
+
+
+    function safeMintWrappedToken(
+        uint256 chainId,
+        address contAddr,
+        address to,
+        uint256 tokenId,
+        string memory uri
+    ) public onlyOwner {
+        crossChain.safeMintWrappedToken(chainId, contAddr, to, tokenId, uri);
     }
 }
